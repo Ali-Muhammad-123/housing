@@ -11,7 +11,12 @@ function Table(props) {
 	const [numberOfItems, setNumberOfItems] = useState(10);
 	var copyOfData = props.data;
 	var internationalNumberFormat = new Intl.NumberFormat("en-US");
-
+	function roundOff(number, percentage) {
+		return (
+			Math.round((number * (Math.random() * percentage)) / 100 / 100000) *
+			100000
+		);
+	}
 	useEffect(() => {
 		setStyle(0);
 		setTimeout(() => setStyle(1), 1000);
@@ -21,9 +26,12 @@ function Table(props) {
 			for (let index = 0; index < amountPercentage; index++) {
 				var randomNumber = Math.floor(Math.random() * data.length);
 				console.log(
-					(copyOfData[randomNumber].hp *
-						(Math.random() * copyOfData[randomNumber].deltahp)) /
-						100
+					Math.round(
+						(copyOfData[randomNumber].lp *
+							(Math.random() * copyOfData[randomNumber].deltalp)) /
+							100 /
+							100000
+					) * 100000
 				);
 				newArr[randomNumber] = {
 					...newArr[randomNumber],
@@ -31,25 +39,29 @@ function Table(props) {
 						Math.random() > 0.5
 							? Math.random() > 0.5
 								? copyOfData[randomNumber].lp +
-								  (copyOfData[randomNumber].lp *
-										(Math.random() * copyOfData[randomNumber].deltalp)) /
-										100
+								  roundOff(
+										copyOfData[randomNumber].lp,
+										copyOfData[randomNumber].deltalp
+								  )
 								: copyOfData[randomNumber].lp -
-								  (copyOfData[randomNumber].lp *
-										(Math.random() * copyOfData[randomNumber].deltalp)) /
-										100
+								  roundOff(
+										copyOfData[randomNumber].lp,
+										copyOfData[randomNumber].deltalp
+								  )
 							: copyOfData[randomNumber].lp,
 					hp:
 						Math.random() > 0.5
 							? Math.random() > 0.5
 								? copyOfData[randomNumber].hp +
-								  (copyOfData[randomNumber].hp *
-										(Math.random() * copyOfData[randomNumber].deltahp)) /
-										100
+								  roundOff(
+										copyOfData[randomNumber].hp,
+										copyOfData[randomNumber].deltahp
+								  )
 								: copyOfData[randomNumber].hp -
-								  (copyOfData[randomNumber].hp *
-										(Math.random() * copyOfData[randomNumber].deltahp)) /
-										100
+								  roundOff(
+										copyOfData[randomNumber].hp,
+										copyOfData[randomNumber].deltahp
+								  )
 							: copyOfData[randomNumber].hp,
 				};
 				setData(newArr);
@@ -141,12 +153,12 @@ function Table(props) {
 													: parseFloat(copyOfData[i].lp) < el.lp
 													? "#edf4f3"
 													: "#fff",
-											opacity:
-												parseFloat(copyOfData[i].lp) > el.lp
-													? style.toString()
-													: parseFloat(copyOfData[i].lp) < el.lp
-													? style.toString()
-													: "1",
+											// opacity:
+											// 	parseFloat(copyOfData[i].lp) > el.lp
+											// 		? style.toString()
+											// 		: parseFloat(copyOfData[i].lp) < el.lp
+											// 		? style.toString()
+											// 		: "1",
 											transition: "opacity 4s",
 										}}
 									>
@@ -161,12 +173,12 @@ function Table(props) {
 													: parseFloat(copyOfData[i].hp) < el.hp
 													? "#edf4f3"
 													: "#fff",
-											opacity:
-												parseFloat(copyOfData[i].hp) > el.hp
-													? style.toString()
-													: parseFloat(copyOfData[i].hp) < el.hp
-													? style.toString()
-													: "1",
+											// opacity:
+											// 	parseFloat(copyOfData[i].hp) > el.hp
+											// 		? style.toString()
+											// 		: parseFloat(copyOfData[i].hp) < el.hp
+											// 		? style.toString()
+											// 		: "1",
 											transition: "opacity 4s",
 										}}
 									>
