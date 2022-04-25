@@ -1,0 +1,30 @@
+.wrapper{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.text{
+    display:flex;
+    flex-direction: column;
+    text-align: center;
+}
+.iconsDiv{
+    display: flex;
+    flex-direction: column;
+}
+
+.sampleCard{
+    padding: 10px 0px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.imgDiv > img{
+    width: 90%;
+}
+
+.sectionwrapper{
+    display: flex;
+}

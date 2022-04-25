@@ -1,0 +1,106 @@
+.topSection{
+    display: flex;
+    justify-content: space-between;
+    padding: 0px 20px;
+    padding: 10px 0px;
+    backdrop-filter: blur(1px);
+    background-color: rgb(141, 226, 165 , 0.3);
+    box-shadow: 0px 10px 28px -6px rgba(0,0,0,0.13);
+-webkit-box-shadow: 0px 10px 28px -6px rgba(0,0,0,0.13);
+-moz-box-shadow: 0px 10px 28px -6px rgba(0,0,0,0.13);
+}
+
+
+
+.headerButton{
+    padding: 5px 10px;
+}
+
+.freeButton{
+    padding: 0px 5px;
+    background-color: #4caba7;
+    align-self: center;
+}
+
+.headerWrapper{
+    background-image: url('../images/BG0.jpg');
+    border-radius: 0px 0px 30px 30px;
+    box-shadow: 0px 10px 19px 0px rgba(0,0,0,0.3);
+-webkit-box-shadow: 0px 10px 19px 0px rgba(0,0,0,0.3);
+-moz-box-shadow: 0px 10px 19px 0px rgba(0,0,0,0.3);
+/* clip-path: inset(0px 0px -15px 0px); */
+
+}
+
+.logo{
+    width: 125px;
+    padding-left: 20px ;
+}
+
+.leftDiv{
+    display: flex;
+    align-items: center;
+
+}
+
+.remainingHeader {
+    padding: 25px 80px;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: row;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -webkit-flex-wrap: nowrap;
+    -ms-flex-wrap: nowrap;
+    flex-wrap: nowrap;
+    -webkit-justify-content: space-between;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    -webkit-align-content: center;
+    -ms-flex-line-pack: center;
+    align-content: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    }
+
+.div1{
+    display: flex;
+    flex-direction: column;
+    -webkit-order: 0;
+    -ms-flex-order: 0;
+    order: 0;
+    -webkit-flex: 10 1 auto;
+    -ms-flex: 10 1 auto;
+    flex: 10 1 auto;
+    -webkit-align-self: auto;
+    -ms-flex-item-align: auto;
+    align-self: auto;
+    }
+
+
+
+.div2 {
+    -webkit-order: 0;
+    -ms-flex-order: 0;
+    order: 0;
+    -webkit-flex: 1 1 auto;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    -webkit-align-self: auto;
+    -ms-flex-item-align: auto;
+    align-self: auto;
+    }
+
+    .internalDiv2{
+        color:#fff
+    }
+
+    
+@media (max-width: 768px) {
+    .remainingHeader{
+        flex-direction: column;
+        padding: 25px 10px;
+    }
+  }

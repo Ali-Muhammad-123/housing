@@ -1,0 +1,565 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model column_stats {
+  db_name       String                  @db.VarChar(64)
+  table_name    String                  @db.VarChar(64)
+  column_name   String                  @db.VarChar(64)
+  min_value     Bytes?                  @db.VarBinary(255)
+  max_value     Bytes?                  @db.VarBinary(255)
+  nulls_ratio   Decimal?                @db.Decimal(12, 4)
+  avg_length    Decimal?                @db.Decimal(12, 4)
+  avg_frequency Decimal?                @db.Decimal(12, 4)
+  hist_size     Int?                    @db.UnsignedTinyInt
+  hist_type     column_stats_hist_type?
+  histogram     Bytes?                  @db.VarBinary(255)
+
+  @@id([db_name, table_name, column_name])
+}
+
+model columns_priv {
+  Host        String   @default("") @db.Char(60)
+  Db          String   @default("") @db.Char(64)
+  User        String   @default("") @db.Char(80)
+  Table_name  String   @default("") @db.Char(64)
+  Column_name String   @default("") @db.Char(64)
+  Timestamp   DateTime @default(now()) @db.Timestamp(0)
+  Column_priv String   @default("")
+
+  @@id([Host, Db, User, Table_name, Column_name])
+}
+
+model db {
+  Host                  String                   @default("") @db.Char(60)
+  Db                    String                   @default("") @db.Char(64)
+  User                  String                   @default("") @db.Char(80)
+  Select_priv           db_Select_priv           @default(N)
+  Insert_priv           db_Insert_priv           @default(N)
+  Update_priv           db_Update_priv           @default(N)
+  Delete_priv           db_Delete_priv           @default(N)
+  Create_priv           db_Create_priv           @default(N)
+  Drop_priv             db_Drop_priv             @default(N)
+  Grant_priv            db_Grant_priv            @default(N)
+  References_priv       db_References_priv       @default(N)
+  Index_priv            db_Index_priv            @default(N)
+  Alter_priv            db_Alter_priv            @default(N)
+  Create_tmp_table_priv db_Create_tmp_table_priv @default(N)
+  Lock_tables_priv      db_Lock_tables_priv      @default(N)
+  Create_view_priv      db_Create_view_priv      @default(N)
+  Show_view_priv        db_Show_view_priv        @default(N)
+  Create_routine_priv   db_Create_routine_priv   @default(N)
+  Alter_routine_priv    db_Alter_routine_priv    @default(N)
+  Execute_priv          db_Execute_priv          @default(N)
+  Event_priv            db_Event_priv            @default(N)
+  Trigger_priv          db_Trigger_priv          @default(N)
+  Delete_history_priv   db_Delete_history_priv   @default(N)
+
+  @@id([Host, Db, User])
+  @@index([User], map: "User")
+}
+
+model event {
+  db                   String                @default("") @db.Char(64)
+  name                 String                @default("") @db.Char(64)
+  body                 Bytes
+  definer              String                @default("") @db.Char(141)
+  execute_at           DateTime?             @db.DateTime(0)
+  interval_value       Int?
+  interval_field       event_interval_field?
+  created              DateTime              @default(now()) @db.Timestamp(0)
+  modified             DateTime              @default(dbgenerated("('0000-00-00 00:00:00')")) @db.Timestamp(0)
+  last_executed        DateTime?             @db.DateTime(0)
+  starts               DateTime?             @db.DateTime(0)
+  ends                 DateTime?             @db.DateTime(0)
+  status               event_status          @default(ENABLED)
+  on_completion        event_on_completion   @default(DROP)
+  sql_mode             String                @default("")
+  comment              String                @default("") @db.Char(64)
+  originator           Int                   @db.UnsignedInt
+  time_zone            String                @default("SYSTEM") @db.Char(64)
+  character_set_client String?               @db.Char(32)
+  collation_connection String?               @db.Char(32)
+  db_collation         String?               @db.Char(32)
+  body_utf8            Bytes?
+
+  @@id([db, name])
+}
+
+model func {
+  name String    @id @default("") @db.Char(64)
+  ret  Boolean   @default(false)
+  dl   String    @default("") @db.Char(128)
+  type func_type
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model general_log {
+  event_time   DateTime @default(now()) @db.Timestamp(6)
+  user_host    String   @db.MediumText
+  thread_id    BigInt   @db.UnsignedBigInt
+  server_id    Int      @db.UnsignedInt
+  command_type String   @db.VarChar(64)
+  argument     String   @db.MediumText
+
+  @@ignore
+}
+
+model global_priv {
+  Host String @default("") @db.Char(60)
+  User String @default("") @db.Char(80)
+  Priv String @default("{}") @db.LongText
+
+  @@id([Host, User])
+}
+
+model gtid_slave_pos {
+  domain_id Int    @db.UnsignedInt
+  sub_id    BigInt @db.UnsignedBigInt
+  server_id Int    @db.UnsignedInt
+  seq_no    BigInt @db.UnsignedBigInt
+
+  @@id([domain_id, sub_id])
+}
+
+model help_category {
+  help_category_id   Int    @id @db.UnsignedSmallInt
+  name               String @unique(map: "name") @db.Char(64)
+  parent_category_id Int?   @db.UnsignedSmallInt
+  url                String @db.Text
+}
+
+model help_keyword {
+  help_keyword_id Int    @id @db.UnsignedInt
+  name            String @unique(map: "name") @db.Char(64)
+}
+
+model help_relation {
+  help_topic_id   Int @db.UnsignedInt
+  help_keyword_id Int @db.UnsignedInt
+
+  @@id([help_keyword_id, help_topic_id])
+}
+
+model help_topic {
+  help_topic_id    Int    @id @db.UnsignedInt
+  name             String @unique(map: "name") @db.Char(64)
+  help_category_id Int    @db.UnsignedSmallInt
+  description      String @db.Text
+  example          String @db.Text
+  url              String @db.Text
+}
+
+model housing {
+  id      Int    @id
+  name    String @db.VarChar(255)
+  lp      Int
+  deltalp Int
+  hp      Int
+  deltahp Int
+  trend   String @db.VarChar(255)
+}
+
+model index_stats {
+  db_name       String   @db.VarChar(64)
+  table_name    String   @db.VarChar(64)
+  index_name    String   @db.VarChar(64)
+  prefix_arity  Int      @db.UnsignedInt
+  avg_frequency Decimal? @db.Decimal(12, 4)
+
+  @@id([db_name, table_name, index_name, prefix_arity])
+}
+
+model innodb_index_stats {
+  database_name    String   @db.VarChar(64)
+  table_name       String   @db.VarChar(199)
+  index_name       String   @db.VarChar(64)
+  last_update      DateTime @default(now()) @db.Timestamp(0)
+  stat_name        String   @db.VarChar(64)
+  stat_value       BigInt   @db.UnsignedBigInt
+  sample_size      BigInt?  @db.UnsignedBigInt
+  stat_description String   @db.VarChar(1024)
+
+  @@id([database_name, table_name, index_name, stat_name])
+}
+
+model innodb_table_stats {
+  database_name            String   @db.VarChar(64)
+  table_name               String   @db.VarChar(199)
+  last_update              DateTime @default(now()) @db.Timestamp(0)
+  n_rows                   BigInt   @db.UnsignedBigInt
+  clustered_index_size     BigInt   @db.UnsignedBigInt
+  sum_of_other_index_sizes BigInt   @db.UnsignedBigInt
+
+  @@id([database_name, table_name])
+}
+
+model plugin {
+  name String @id @default("") @db.VarChar(64)
+  dl   String @default("") @db.VarChar(128)
+}
+
+model proc {
+  db                   String                @default("") @db.Char(64)
+  name                 String                @default("") @db.Char(64)
+  type                 proc_type
+  specific_name        String                @default("") @db.Char(64)
+  language             proc_language         @default(SQL)
+  sql_data_access      proc_sql_data_access  @default(CONTAINS_SQL)
+  is_deterministic     proc_is_deterministic @default(NO)
+  security_type        proc_security_type    @default(DEFINER)
+  param_list           Bytes                 @db.Blob
+  returns              Bytes
+  body                 Bytes
+  definer              String                @default("") @db.Char(141)
+  created              DateTime              @default(now()) @db.Timestamp(0)
+  modified             DateTime              @default(dbgenerated("('0000-00-00 00:00:00')")) @db.Timestamp(0)
+  sql_mode             String                @default("")
+  comment              String                @db.Text
+  character_set_client String?               @db.Char(32)
+  collation_connection String?               @db.Char(32)
+  db_collation         String?               @db.Char(32)
+  body_utf8            Bytes?
+  aggregate            proc_aggregate        @default(NONE)
+
+  @@id([db, name, type])
+}
+
+model procs_priv {
+  Host         String                  @default("") @db.Char(60)
+  Db           String                  @default("") @db.Char(64)
+  User         String                  @default("") @db.Char(80)
+  Routine_name String                  @default("") @db.Char(64)
+  Routine_type procs_priv_Routine_type
+  Grantor      String                  @default("") @db.Char(141)
+  Proc_priv    String                  @default("")
+  Timestamp    DateTime                @default(now()) @db.Timestamp(0)
+
+  @@id([Host, Db, User, Routine_name, Routine_type])
+  @@index([Grantor], map: "Grantor")
+}
+
+model proxies_priv {
+  Host         String   @default("") @db.Char(60)
+  User         String   @default("") @db.Char(80)
+  Proxied_host String   @default("") @db.Char(60)
+  Proxied_user String   @default("") @db.Char(80)
+  With_grant   Boolean  @default(false)
+  Grantor      String   @default("") @db.Char(141)
+  Timestamp    DateTime @default(now()) @db.Timestamp(0)
+
+  @@id([Host, User, Proxied_host, Proxied_user])
+  @@index([Grantor], map: "Grantor")
+}
+
+model roles_mapping {
+  Host         String                     @default("") @db.Char(60)
+  User         String                     @default("") @db.Char(80)
+  Role         String                     @default("") @db.Char(80)
+  Admin_option roles_mapping_Admin_option @default(N)
+
+  @@unique([Host, User, Role], map: "Host")
+}
+
+model servers {
+  Server_name String @id @default("") @db.Char(64)
+  Host        String @default("") @db.Char(64)
+  Db          String @default("") @db.Char(64)
+  Username    String @default("") @db.Char(80)
+  Password    String @default("") @db.Char(64)
+  Port        Int    @default(0)
+  Socket      String @default("") @db.Char(64)
+  Wrapper     String @default("") @db.Char(64)
+  Owner       String @default("") @db.Char(64)
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model slow_log {
+  start_time     DateTime @default(now()) @db.Timestamp(6)
+  user_host      String   @db.MediumText
+  query_time     DateTime @db.Time(6)
+  lock_time      DateTime @db.Time(6)
+  rows_sent      Int
+  rows_examined  Int
+  db             String   @db.VarChar(512)
+  last_insert_id Int
+  insert_id      Int
+  server_id      Int      @db.UnsignedInt
+  sql_text       String   @db.MediumText
+  thread_id      BigInt   @db.UnsignedBigInt
+  rows_affected  Int
+
+  @@ignore
+}
+
+model table_stats {
+  db_name     String  @db.VarChar(64)
+  table_name  String  @db.VarChar(64)
+  cardinality BigInt? @db.UnsignedBigInt
+
+  @@id([db_name, table_name])
+}
+
+model tables_priv {
+  Host        String   @default("") @db.Char(60)
+  Db          String   @default("") @db.Char(64)
+  User        String   @default("") @db.Char(80)
+  Table_name  String   @default("") @db.Char(64)
+  Grantor     String   @default("") @db.Char(141)
+  Timestamp   DateTime @default(now()) @db.Timestamp(0)
+  Table_priv  String   @default("")
+  Column_priv String   @default("")
+
+  @@id([Host, Db, User, Table_name])
+  @@index([Grantor], map: "Grantor")
+}
+
+model time_zone {
+  Time_zone_id     Int                        @id @default(autoincrement()) @db.UnsignedInt
+  Use_leap_seconds time_zone_Use_leap_seconds @default(N)
+}
+
+model time_zone_leap_second {
+  Transition_time BigInt @id
+  Correction      Int
+}
+
+model time_zone_name {
+  Name         String @id @db.Char(64)
+  Time_zone_id Int    @db.UnsignedInt
+}
+
+model time_zone_transition {
+  Time_zone_id       Int    @db.UnsignedInt
+  Transition_time    BigInt
+  Transition_type_id Int    @db.UnsignedInt
+
+  @@id([Time_zone_id, Transition_time])
+}
+
+model time_zone_transition_type {
+  Time_zone_id       Int    @db.UnsignedInt
+  Transition_type_id Int    @db.UnsignedInt
+  Offset             Int    @default(0)
+  Is_DST             Int    @default(0) @db.UnsignedTinyInt
+  Abbreviation       String @default("") @db.Char(8)
+
+  @@id([Time_zone_id, Transition_type_id])
+}
+
+model transaction_registry {
+  transaction_id   BigInt                               @id @db.UnsignedBigInt
+  commit_id        BigInt                               @unique(map: "commit_id") @db.UnsignedBigInt
+  begin_timestamp  DateTime                             @default(dbgenerated("('0000-00-00 00:00:00.000000')")) @db.Timestamp(6)
+  commit_timestamp DateTime                             @default(dbgenerated("('0000-00-00 00:00:00.000000')")) @db.Timestamp(6)
+  isolation_level  transaction_registry_isolation_level
+
+  @@index([begin_timestamp], map: "begin_timestamp")
+  @@index([commit_timestamp, transaction_id], map: "commit_timestamp")
+}
+
+enum column_stats_hist_type {
+  SINGLE_PREC_HB
+  DOUBLE_PREC_HB
+}
+
+enum db_Select_priv {
+  N
+  Y
+}
+
+enum db_Insert_priv {
+  N
+  Y
+}
+
+enum db_Update_priv {
+  N
+  Y
+}
+
+enum db_Delete_priv {
+  N
+  Y
+}
+
+enum db_Create_priv {
+  N
+  Y
+}
+
+enum db_Drop_priv {
+  N
+  Y
+}
+
+enum db_Grant_priv {
+  N
+  Y
+}
+
+enum db_References_priv {
+  N
+  Y
+}
+
+enum db_Index_priv {
+  N
+  Y
+}
+
+enum db_Alter_priv {
+  N
+  Y
+}
+
+enum db_Create_tmp_table_priv {
+  N
+  Y
+}
+
+enum db_Lock_tables_priv {
+  N
+  Y
+}
+
+enum db_Create_view_priv {
+  N
+  Y
+}
+
+enum db_Show_view_priv {
+  N
+  Y
+}
+
+enum db_Create_routine_priv {
+  N
+  Y
+}
+
+enum db_Alter_routine_priv {
+  N
+  Y
+}
+
+enum db_Execute_priv {
+  N
+  Y
+}
+
+enum db_Event_priv {
+  N
+  Y
+}
+
+enum db_Trigger_priv {
+  N
+  Y
+}
+
+enum db_Delete_history_priv {
+  N
+  Y
+}
+
+enum event_interval_field {
+  YEAR
+  QUARTER
+  MONTH
+  DAY
+  HOUR
+  MINUTE
+  WEEK
+  SECOND
+  MICROSECOND
+  YEAR_MONTH
+  DAY_HOUR
+  DAY_MINUTE
+  DAY_SECOND
+  HOUR_MINUTE
+  HOUR_SECOND
+  MINUTE_SECOND
+  DAY_MICROSECOND
+  HOUR_MICROSECOND
+  MINUTE_MICROSECOND
+  SECOND_MICROSECOND
+}
+
+enum event_status {
+  ENABLED
+  DISABLED
+  SLAVESIDE_DISABLED
+}
+
+enum event_on_completion {
+  DROP
+  PRESERVE
+}
+
+enum func_type {
+  function
+  aggregate
+}
+
+enum proc_type {
+  FUNCTION
+  PROCEDURE
+  PACKAGE
+  PACKAGE_BODY @map("PACKAGE BODY")
+}
+
+enum proc_language {
+  SQL
+}
+
+enum proc_sql_data_access {
+  CONTAINS_SQL
+  NO_SQL
+  READS_SQL_DATA
+  MODIFIES_SQL_DATA
+}
+
+enum proc_is_deterministic {
+  YES
+  NO
+}
+
+enum proc_security_type {
+  INVOKER
+  DEFINER
+}
+
+enum proc_aggregate {
+  NONE
+  GROUP
+}
+
+enum procs_priv_Routine_type {
+  FUNCTION
+  PROCEDURE
+  PACKAGE
+  PACKAGE_BODY @map("PACKAGE BODY")
+}
+
+enum roles_mapping_Admin_option {
+  N
+  Y
+}
+
+enum time_zone_Use_leap_seconds {
+  Y
+  N
+}
+
+enum transaction_registry_isolation_level {
+  READ_UNCOMMITTED @map("READ-UNCOMMITTED")
+  READ_COMMITTED @map("READ-COMMITTED")
+  REPEATABLE_READ @map("REPEATABLE-READ")
+  SERIALIZABLE
+}
