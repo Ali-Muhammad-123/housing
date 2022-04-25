@@ -1,5 +1,5 @@
 import Reac from "react";
-import styles from "../styles/ThirdSection.module.css";
+import styles from "../styles/thirdSection.module.css";
 import image1 from "../images/10.png";
 import image2 from "../images/20.png";
 import image3 from "../images/30.png";
